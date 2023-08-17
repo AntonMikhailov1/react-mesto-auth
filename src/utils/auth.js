@@ -1,6 +1,5 @@
 class Auth {
     #baseUrl
-    #checkError;
 
     constructor(baseUrl) {
       this.#baseUrl = baseUrl;
