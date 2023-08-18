@@ -1,48 +1,38 @@
-class Auth {
-    #baseUrl
+export const baseUrl = " https://auth.nomoreparties.co";
 
-    constructor(baseUrl) {
-      this.#baseUrl = baseUrl;
-    }
-    
-    #checkError(res) {
-      if (res.ok) {
+function checkError(res) {
+    if (res.ok) {
         return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
     }
+    return Promise.reject(`Ошибка: ${res.status}`);
+}
 
-    userSignUp(email, password) {
-      return fetch(`${this.#baseUrl}/signup`, {
+export function signUpUser(data) {
+    return fetch(`${baseUrl}/signup`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+            "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
-      }).then((res) => this.#checkError(res));
-    }
-  
-    userSignIn(email, password) {
-      return fetch(`${this.#baseUrl}/signin`, {
+        body: JSON.stringify(data),
+    }).then(checkError);
+}
+
+export function signInUser(data) {
+    return fetch(`${baseUrl}/signin`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+            "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
-      }).then((res) => this.#checkError(res));
-    }
-  
-    checkToken(token) {
-      return fetch(`${this.#baseUrl}/users/me`, {
+        body: JSON.stringify(data),
+    }).then(checkError);
+}
+
+export function checkToken(token) {
+    return fetch(`${baseUrl}/users/me`, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
         },
-      }).then((res) => this.#checkError(res));
-    }
-  }
-
-  const auth = new Auth("https://auth.nomoreparties.co");
-  
-  export default auth;
+    }).then(checkError);
+}

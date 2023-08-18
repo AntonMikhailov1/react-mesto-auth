@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
 
 function Login(props) {
   const [email, setEmail] = useState("");
@@ -15,11 +14,7 @@ function Login(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    props.onSignIn(email, password);
-  }
-
-  if (props.loggedIn) {
-    return <Redirect to="/" />;
+    props.onSignIn({email, password});
   }
 
   return (
@@ -33,6 +28,7 @@ function Login(props) {
         placeholder="Email"
         required=""
         onChange={handleEmailChange}
+        autoComplete="off"
       />
 
       <input
@@ -43,6 +39,7 @@ function Login(props) {
         placeholder="Пароль"
         required=""
         onChange={handlePasswordChange}
+        autoComplete="off"
       />
 
       <button className="auth__submit-btn" type="submit">
@@ -51,4 +48,5 @@ function Login(props) {
     </form>
   );
 }
+
 export default Login;

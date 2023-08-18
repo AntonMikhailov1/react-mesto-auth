@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
+
+import CurrentUserContext from "../contexts/CurrentUserContext.jsx";
+
 import "../index.css";
+
 import api from "../utils/api";
-import auth from "../utils/auth";
+import * as auth from "../utils/auth";
+
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -10,45 +16,46 @@ import AddPlacePopup from "./AddPlacePopup";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import ImagePopup from "./ImagePopup";
-import ProtectedRoute from "./ProtectedRoute";
+
 import Login from "./Login";
 import Register from "./Register";
 import InfoTooltip from "./InfoTooltip";
-import CurrentUserContext from "../contexts/CurrentUserContext.jsx";
 
 export default function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, seIsEditAvatarPopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
-  const [selectedCard, setSelectedCard] = useState({});
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
 
-  const [currentUser, setCurrentUser] = useState({});
-
   const [cards, setCards] = useState([]);
+  const [selectedCard, setSelectedCard] = useState({});
+
+  const [currentUser, setCurrentUser] = useState({});
+  const [userEmail, setUserEmail] = useState("");
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [isSignUpSuccess, setIsSignUpSuccess] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all([api.getProfileInfo(), api.getInitialCards()])
-      .then(([userData, cardData]) => {
-        setCurrentUser(userData);
-        setCards(cardData);
-      })
-      .catch((err) => console.error(err));
-  }, []);
+    if (loggedIn) {
+      Promise.all([api.getProfileInfo(), api.getInitialCards()])
+        .then(([userData, cardData]) => {
+          setCurrentUser(userData);
+          setCards(cardData);
+        })
+        .catch((err) => console.error(err));
+    }
+  }, [loggedIn]);
 
   // Registration
-  function handleUserSignUp(email, password) {
-    api
-      .signUpUser(email, password)
-      .then((data) => {
-        if (data) {
+  function handleUserSignUp(signUpData) {
+    auth
+      .signUpUser(signUpData)
+      .then((res) => {
+        if (res) {
           setIsSignUpSuccess(true);
           navigate("/sing-in");
         }
@@ -61,14 +68,16 @@ export default function App() {
   }
 
   // Authentication
-  function handleUserSigIn(email, password) {
-    api
-      .signInUser(email, password)
-      .then((data) => {
-        if (data.token) {
-          setUserEmail(email);
+  function handleUserSignIn(signInData) {
+    auth
+      .signInUser(signInData)
+      .then((res) => {
+        if (res) {
+          localStorage.setItem("jwt", res.token);
+          console.log(signInData);
+          console.log(signInData.email);
+          setUserEmail(signInData.email);
           setLoggedIn(true);
-          localStorage.setItem("jwt", data.token);
           navigate("/");
         }
       })
@@ -79,28 +88,29 @@ export default function App() {
       });
   }
 
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (jwt) {
-      auth
-        .checkToken(jwt)
-        .then((data) => {
-          if (data) {
-            setLoggedIn(true);
-            setUserEmail(data.data.email);
-            navigate("/");
-          }
-        })
-        .catch((err) => console.log(err));
-    }
-  }, []);
-
   function handleUserSingOut() {
     localStorage.removeItem("jwt");
     setUserEmail("");
     setLoggedIn(false);
     navigate("/sign-in");
   }
+
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (jwt) {
+      auth
+        .checkToken(jwt)
+        .then((res) => {
+          console.log(res);
+          if (res) {
+            setLoggedIn(true);
+            setUserEmail(res.data.email);
+            navigate("/");
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [navigate]);
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
@@ -145,6 +155,7 @@ export default function App() {
     seIsEditAvatarPopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsImagePopupOpen(false);
+    setIsInfoTooltipOpen(false);
   }
 
   function handleUpdateUser(userData) {
@@ -183,35 +194,38 @@ export default function App() {
         <Header onSignOut={handleUserSingOut} userEmail={userEmail} />
 
         <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute
-                element={Main}
-                onEditProfile={handleEditProfileClick}
-                onAddPlace={handleAddPlaceClick}
-                onEditAvatar={handleEditAvatarClick}
-                onCardClick={handleCardClick}
-                onCardLike={handleCardLike}
-                onCardDelete={handleCardDelete}
-                cards={cards}
-                loggedIn={loggedIn}
-              />
-            }
-          />
+          <Route element={<ProtectedRoute loggedIn={loggedIn} />}>
+            <Route
+              exact
+              path="/"
+              element={
+                <Main
+                  onEditProfile={handleEditProfileClick}
+                  onAddPlace={handleAddPlaceClick}
+                  onEditAvatar={handleEditAvatarClick}
+                  onCardClick={handleCardClick}
+                  onCardLike={handleCardLike}
+                  onCardDelete={handleCardDelete}
+                  cards={cards}
+                />
+              }
+            />
+          </Route>
 
           <Route
+            exact
             path="/sign-up"
             element={<Register onSignUp={handleUserSignUp} />}
           />
 
           <Route
+            exact
             path="/sign-in"
-            element={<Login onSignIn={handleUserSigIn} />}
+            element={<Login onSignIn={handleUserSignIn} />}
           />
-        </Routes>
 
-        <Main />
+          <Route path="*" element={<Navigate to="/sign-in" />} />
+        </Routes>
 
         <Footer />
 

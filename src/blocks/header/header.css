@@ -1,9 +1,12 @@
 .header {
+    display: flex;
+    justify-content: space-between;
     margin: 0;
     margin-top: 28px;
     margin-bottom: 42px;
     padding: 0;
     padding-left: 27px;
+    padding-right: 27px;
     box-sizing: border-box;
     max-width: 880px;
     width: 100%;

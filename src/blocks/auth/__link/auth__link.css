@@ -18,3 +18,9 @@
     margin: 20px auto 0;
   }
 }
+
+.auth__link:hover {
+  opacity: 0.60;
+  cursor: pointer;
+  transition: opacity 0.5s ease;
+}

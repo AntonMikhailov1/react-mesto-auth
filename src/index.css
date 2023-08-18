@@ -71,6 +71,7 @@
 @import "./blocks/popup/__image-caption/popup__image-caption.css";
 @import "./blocks/popup/__form/popup__form.css";
 @import "./blocks/popup/__title/popup__title.css";
+@import "./blocks/popup/__title/_type/popup__title_type_info-tooltip.css";
 @import "./blocks/popup/__field/popup__field.css";
 @import "./blocks/popup/__field/_type/popup__field_type_error.css";
 @import "./blocks/popup/__field-error/popup__field-error.css";

@@ -1,37 +1,35 @@
 import React from "react";
-import { Route, Link } from "react-router-dom"
-import logo from '../images/logo.svg'
+import { Link, Routes, Route } from "react-router-dom";
+import EmailContainer from "./EmailContainer";
+import logo from "../images/logo.svg";
 
-export default function Header(props) {
+export default function Header({userEmail, onSignOut}) {
   return (
     <header className="header">
-      <img
-        className="header__logo"
-        src={logo}
-        alt="Лого Mesto"
-      />
+      <img className="header__logo" src={logo} alt="Лого Mesto" />
 
-      <Route path="/sign-in">
-        <Link to="sign-up" className="header__link">
-          Регистрация
-        </Link>
-      </Route>
+      <Routes>
+        <Route
+          exact path="/sign-in"
+          element={
+            <Link to="/sign-up" className="header__link">
+              Регистрация
+            </Link>
+          }
+        />
 
-      <Route path="/sign-up">
-        <Link to="sign-in" className="header__link">
-          Войти
-        </Link>
-      </Route>
+        <Route
+          exact path="/sign-up"
+          element={
+            <Link to="/sign-in" className="header__link">
+              Войти
+            </Link>
+          }
+        />
 
-      <Route exact path="/">
-        <div className="header__email-container">
-          <p className="header__email-text">{props.userEmail}</p>
-          <Link to="sign-in" className="header__sign-out" onClick={props.onSignOut}>
-            Выйти
-          </Link>
-        </div>
-      </Route>
+        <Route exact path="/" element={<EmailContainer userEmail={userEmail} onSignOut={onSignOut}/>} />
 
+      </Routes>
     </header>
   );
 }

@@ -22,7 +22,7 @@ export default function Card(props) {
   }
 
   return (
-    <>
+    <li className="element">
       {isOwn && (
         <button
           type="button"
@@ -45,6 +45,6 @@ export default function Card(props) {
           </span>
         </div>
       </div>
-    </>
+    </li>
   );
 }
