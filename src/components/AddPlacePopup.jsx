@@ -35,6 +35,7 @@ export default function AddPlacePopup(props) {
       isOpen={props.isOpen}
       onClose={props.onClose}
       onSubmit={handleSubmit}
+      buttonText="Создать"
     >
       <input
         className="popup__field popup__field_input_name"
@@ -58,9 +59,6 @@ export default function AddPlacePopup(props) {
         value={link}
       />
       <span className="link-error popup__field-error" />
-      <button className="popup__submit-btn" type="submit">
-        Сохранить
-      </button>
     </PopupWithForm>
   );
 }

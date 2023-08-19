@@ -15,6 +15,8 @@ export default function PopupWithForm(props) {
           onSubmit={props.onSubmit}
         >
           {props.children}
+
+          <button className="popup__submit-btn" type="submit">{props.buttonText}</button>
         </form>
       </div>
     </div>

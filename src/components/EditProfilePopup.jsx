@@ -40,6 +40,7 @@ export default function EditProfilePopup(props) {
       isOpen={props.isOpen}
       onClose={props.onClose}
       onSubmit={handleSubmit}
+      buttonText="Сохранить"
     >
       <input
         className="popup__field popup__field_input_name"
@@ -63,9 +64,6 @@ export default function EditProfilePopup(props) {
         onChange={handleDescriptionChange}
       />
       <span className="about-error popup__field-error" />
-      <button className="popup__submit-btn" type="submit">
-        Сохранить
-      </button>
     </PopupWithForm>
   );
 }

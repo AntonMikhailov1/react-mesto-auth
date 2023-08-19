@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AuthForm from "./AuthForm";
 
 function Login(props) {
   const [email, setEmail] = useState("");
@@ -14,38 +15,20 @@ function Login(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    props.onSignIn({email, password});
+    props.onSignIn({ email, password });
   }
 
   return (
-    <form className="auth__form" onSubmit={handleSubmit} noValidate>
-      <h2 className="auth__title">Вход</h2>
-      <input
-        className="auth__field"
-        type="email"
-        name="email"
-        value={email}
-        placeholder="Email"
-        required=""
-        onChange={handleEmailChange}
-        autoComplete="off"
-      />
-
-      <input
-        className="auth__field"
-        name="password"
-        type="password"
-        value={password}
-        placeholder="Пароль"
-        required=""
-        onChange={handlePasswordChange}
-        autoComplete="off"
-      />
-
-      <button className="auth__submit-btn" type="submit">
-        Войти
-      </button>
-    </form>
+    <AuthForm
+      email={email}
+      password={password}
+      handleEmailChange={handleEmailChange}
+      handlePasswordChange={handlePasswordChange}
+      handleSubmit={handleSubmit}
+      titleText="Вход"
+      buttonText="Войти"
+      isSignedUp={false}
+    />
   );
 }
 
